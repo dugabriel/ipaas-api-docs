@@ -1,0 +1,2602 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "3.0.91",
+    "title": "Mailchimp Marketing API - templates",
+    "contact": {
+      "name": "Mailchimp API Support",
+      "email": "apihelp@mailchimp.com"
+    },
+    "x-permalink": "https://github.com/mailchimp/mailchimp-client-lib-codegen/blob/main/spec/marketing.json"
+  },
+  "servers": [
+    {
+      "url": "https://server.api.mailchimp.com/3.0"
+    }
+  ],
+  "tags": [],
+  "paths": {
+    "/templates": {
+      "get": {
+        "summary": "List templates",
+        "description": "Get a list of an account's available templates.",
+        "operationId": "getTemplates",
+        "parameters": [
+          {
+            "name": "fields",
+            "x-title": "Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to return. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "exclude_fields",
+            "x-title": "Exclude Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to exclude. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "count",
+            "x-title": "Count",
+            "in": "query",
+            "description": "The number of records to return. Default value is 10. Maximum value is 1000",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "x-title": "Offset",
+            "in": "query",
+            "description": "Used for [pagination](https://mailchimp.com/developer/marketing/docs/methods-parameters/#pagination), this is the number of records from a collection to skip. Default value is 0.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "created_by",
+            "x-title": "Created By",
+            "in": "query",
+            "description": "The Mailchimp account user who created the template.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since_date_created",
+            "x-title": "Since Date Created",
+            "in": "query",
+            "description": "Restrict the response to templates created after the set date. Uses ISO 8601 time format: 2015-10-21T15:41:36+00:00.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before_date_created",
+            "x-title": "Before Date Created",
+            "in": "query",
+            "description": "Restrict the response to templates created before the set date. Uses ISO 8601 time format: 2015-10-21T15:41:36+00:00.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "x-title": "Template Type",
+            "in": "query",
+            "required": false,
+            "description": "Limit results based on template type.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "x-title": "Category",
+            "in": "query",
+            "description": "Limit results based on category.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "folder_id",
+            "x-title": "Folder ID",
+            "in": "query",
+            "description": "The unique folder id.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_field",
+            "x-title": "Sort By Field",
+            "description": "Returns user templates sorted by the specified field.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "date_created",
+                "date_edited",
+                "name"
+              ]
+            }
+          },
+          {
+            "name": "content_type",
+            "x-title": "Content Type",
+            "in": "query",
+            "required": false,
+            "description": "Limit results based on how the template's content is put together. Only templates of type `user` can be filtered by `content_type`. If you want to retrieve saved templates created with the legacy email editor, then filter `content_type` to `template`. If you'd rather pull your saved templates for the new editor, filter to `multichannel`. For code your own templates, filter to `html`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "html",
+                "template",
+                "multichannel"
+              ]
+            }
+          },
+          {
+            "name": "sort_dir",
+            "x-title": "Sort Direction",
+            "description": "Determines the order direction for sorted results.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ASC",
+                "DESC"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Templates",
+                  "description": "A list an account's available templates.",
+                  "properties": {
+                    "templates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Template Instance",
+                        "description": "Information about a specific template.",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "title": "Template ID",
+                            "description": "The individual id for the template.",
+                            "readOnly": true
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Template Type",
+                            "description": "The type of template (user, base, or gallery).",
+                            "readOnly": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "title": "Template Name",
+                            "description": "The name of the template."
+                          },
+                          "drag_and_drop": {
+                            "type": "boolean",
+                            "title": "Drag and Drop",
+                            "description": "Whether the template uses the drag and drop editor.",
+                            "readOnly": true
+                          },
+                          "responsive": {
+                            "type": "boolean",
+                            "title": "Responsive",
+                            "description": "Whether the template contains media queries to make it responsive.",
+                            "readOnly": true
+                          },
+                          "category": {
+                            "type": "string",
+                            "title": "Template Category",
+                            "description": "If available, the category the template is listed in.",
+                            "readOnly": true
+                          },
+                          "date_created": {
+                            "type": "string",
+                            "title": "Date Created",
+                            "description": "The date and time the template was created in ISO 8601 format.",
+                            "format": "date-time",
+                            "readOnly": true
+                          },
+                          "date_edited": {
+                            "type": "string",
+                            "title": "Date Edited",
+                            "description": "The date and time the template was edited in ISO 8601 format.",
+                            "format": "date-time",
+                            "readOnly": true
+                          },
+                          "created_by": {
+                            "type": "string",
+                            "title": "Created By",
+                            "description": "The login name for template's creator.",
+                            "readOnly": true
+                          },
+                          "edited_by": {
+                            "type": "string",
+                            "title": "Edited By",
+                            "description": "The login name who last edited the template.",
+                            "readOnly": true
+                          },
+                          "active": {
+                            "type": "boolean",
+                            "title": "Active",
+                            "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                            "readOnly": true
+                          },
+                          "folder_id": {
+                            "type": "string",
+                            "title": "Folder ID",
+                            "description": "The id of the folder the template is currently in."
+                          },
+                          "thumbnail": {
+                            "type": "string",
+                            "title": "Template Thumbnail",
+                            "description": "If available, the URL for a thumbnail of the template.",
+                            "readOnly": true
+                          },
+                          "share_url": {
+                            "type": "string",
+                            "title": "Share URL",
+                            "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                            "readOnly": true
+                          },
+                          "content_type": {
+                            "type": "string",
+                            "title": "Content Type",
+                            "description": "How the template's content is put together.",
+                            "enum": [
+                              "template",
+                              "multichannel",
+                              "html"
+                            ],
+                            "readOnly": true
+                          },
+                          "_links": {
+                            "title": "Links",
+                            "description": "A list of link types and descriptions for the API schema documents.",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "title": "Resource Link",
+                              "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                              "properties": {
+                                "rel": {
+                                  "type": "string",
+                                  "title": "Rel",
+                                  "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                                  "readOnly": true
+                                },
+                                "href": {
+                                  "type": "string",
+                                  "title": "Href",
+                                  "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                                  "readOnly": true
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "title": "Method",
+                                  "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                                  "enum": [
+                                    "GET",
+                                    "POST",
+                                    "PUT",
+                                    "PATCH",
+                                    "DELETE",
+                                    "OPTIONS",
+                                    "HEAD"
+                                  ],
+                                  "readOnly": true
+                                },
+                                "targetSchema": {
+                                  "type": "string",
+                                  "title": "Target Schema",
+                                  "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                                  "readOnly": true
+                                },
+                                "schema": {
+                                  "type": "string",
+                                  "title": "Schema",
+                                  "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                                  "readOnly": true
+                                }
+                              }
+                            },
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "title": "User Templates",
+                      "description": "All of an account's saved or custom templates."
+                    },
+                    "total_items": {
+                      "type": "integer",
+                      "title": "Item Count",
+                      "description": "The total number of items matching the query regardless of pagination.",
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Templates",
+                  "description": "A list an account's available templates.",
+                  "properties": {
+                    "templates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Template Instance",
+                        "description": "Information about a specific template.",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "title": "Template ID",
+                            "description": "The individual id for the template.",
+                            "readOnly": true
+                          },
+                          "type": {
+                            "type": "string",
+                            "title": "Template Type",
+                            "description": "The type of template (user, base, or gallery).",
+                            "readOnly": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "title": "Template Name",
+                            "description": "The name of the template."
+                          },
+                          "drag_and_drop": {
+                            "type": "boolean",
+                            "title": "Drag and Drop",
+                            "description": "Whether the template uses the drag and drop editor.",
+                            "readOnly": true
+                          },
+                          "responsive": {
+                            "type": "boolean",
+                            "title": "Responsive",
+                            "description": "Whether the template contains media queries to make it responsive.",
+                            "readOnly": true
+                          },
+                          "category": {
+                            "type": "string",
+                            "title": "Template Category",
+                            "description": "If available, the category the template is listed in.",
+                            "readOnly": true
+                          },
+                          "date_created": {
+                            "type": "string",
+                            "title": "Date Created",
+                            "description": "The date and time the template was created in ISO 8601 format.",
+                            "format": "date-time",
+                            "readOnly": true
+                          },
+                          "date_edited": {
+                            "type": "string",
+                            "title": "Date Edited",
+                            "description": "The date and time the template was edited in ISO 8601 format.",
+                            "format": "date-time",
+                            "readOnly": true
+                          },
+                          "created_by": {
+                            "type": "string",
+                            "title": "Created By",
+                            "description": "The login name for template's creator.",
+                            "readOnly": true
+                          },
+                          "edited_by": {
+                            "type": "string",
+                            "title": "Edited By",
+                            "description": "The login name who last edited the template.",
+                            "readOnly": true
+                          },
+                          "active": {
+                            "type": "boolean",
+                            "title": "Active",
+                            "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                            "readOnly": true
+                          },
+                          "folder_id": {
+                            "type": "string",
+                            "title": "Folder ID",
+                            "description": "The id of the folder the template is currently in."
+                          },
+                          "thumbnail": {
+                            "type": "string",
+                            "title": "Template Thumbnail",
+                            "description": "If available, the URL for a thumbnail of the template.",
+                            "readOnly": true
+                          },
+                          "share_url": {
+                            "type": "string",
+                            "title": "Share URL",
+                            "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                            "readOnly": true
+                          },
+                          "content_type": {
+                            "type": "string",
+                            "title": "Content Type",
+                            "description": "How the template's content is put together.",
+                            "enum": [
+                              "template",
+                              "multichannel",
+                              "html"
+                            ],
+                            "readOnly": true
+                          },
+                          "_links": {
+                            "title": "Links",
+                            "description": "A list of link types and descriptions for the API schema documents.",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "title": "Resource Link",
+                              "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                              "properties": {
+                                "rel": {
+                                  "type": "string",
+                                  "title": "Rel",
+                                  "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                                  "readOnly": true
+                                },
+                                "href": {
+                                  "type": "string",
+                                  "title": "Href",
+                                  "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                                  "readOnly": true
+                                },
+                                "method": {
+                                  "type": "string",
+                                  "title": "Method",
+                                  "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                                  "enum": [
+                                    "GET",
+                                    "POST",
+                                    "PUT",
+                                    "PATCH",
+                                    "DELETE",
+                                    "OPTIONS",
+                                    "HEAD"
+                                  ],
+                                  "readOnly": true
+                                },
+                                "targetSchema": {
+                                  "type": "string",
+                                  "title": "Target Schema",
+                                  "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                                  "readOnly": true
+                                },
+                                "schema": {
+                                  "type": "string",
+                                  "title": "Schema",
+                                  "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                                  "readOnly": true
+                                }
+                              }
+                            },
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "title": "User Templates",
+                      "description": "All of an account's saved or custom templates."
+                    },
+                    "total_items": {
+                      "type": "integer",
+                      "title": "Item Count",
+                      "description": "The total number of items matching the query regardless of pagination.",
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "list",
+          "methodNameCamel": "list"
+        }
+      },
+      "post": {
+        "summary": "Add template",
+        "description": "Create a new template for the account. Only Classic templates are supported.",
+        "operationId": "postTemplates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Template Instance",
+                "description": "Information about a specific template.",
+                "required": [
+                  "name",
+                  "html"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Template Name",
+                    "description": "The name of the template.",
+                    "example": "Freddie's Jokes"
+                  },
+                  "folder_id": {
+                    "type": "string",
+                    "title": "Folder ID",
+                    "description": "The id of the folder the template is currently in.",
+                    "example": "a4b830b"
+                  },
+                  "html": {
+                    "type": "string",
+                    "title": "Template HTML",
+                    "description": "The raw HTML for the template. We  support the Mailchimp [Template Language](https://mailchimp.com/help/getting-started-with-mailchimps-template-language/) in any HTML code passed via the API."
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "create",
+          "methodNameCamel": "create"
+        }
+      }
+    },
+    "/templates/{template_id}": {
+      "get": {
+        "summary": "Get template info",
+        "description": "Get information about a specific template.",
+        "operationId": "getTemplatesId",
+        "parameters": [
+          {
+            "name": "fields",
+            "x-title": "Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to return. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "exclude_fields",
+            "x-title": "Exclude Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to exclude. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "template_id",
+            "x-title": "Template ID",
+            "in": "path",
+            "description": "The unique id for the template.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "get_template",
+          "methodNameCamel": "getTemplate"
+        }
+      },
+      "patch": {
+        "summary": "Update template",
+        "description": "Update the name, HTML, or `folder_id` of an existing template.",
+        "operationId": "patchTemplatesId",
+        "parameters": [
+          {
+            "name": "template_id",
+            "x-title": "Template ID",
+            "in": "path",
+            "description": "The unique id for the template.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Template Instance",
+                "description": "Information about a specific template.",
+                "required": [
+                  "name",
+                  "html"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Template Name",
+                    "description": "The name of the template.",
+                    "example": "Freddie's Jokes"
+                  },
+                  "folder_id": {
+                    "type": "string",
+                    "title": "Folder ID",
+                    "description": "The id of the folder the template is currently in.",
+                    "example": "a4b830b"
+                  },
+                  "html": {
+                    "type": "string",
+                    "title": "Template HTML",
+                    "description": "The raw HTML for the template. We  support the Mailchimp [Template Language](https://mailchimp.com/help/getting-started-with-mailchimps-template-language/) in any HTML code passed via the API."
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Instance",
+                  "description": "Information about a specific template.",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "title": "Template ID",
+                      "description": "The individual id for the template.",
+                      "readOnly": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "title": "Template Type",
+                      "description": "The type of template (user, base, or gallery).",
+                      "readOnly": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "title": "Template Name",
+                      "description": "The name of the template."
+                    },
+                    "drag_and_drop": {
+                      "type": "boolean",
+                      "title": "Drag and Drop",
+                      "description": "Whether the template uses the drag and drop editor.",
+                      "readOnly": true
+                    },
+                    "responsive": {
+                      "type": "boolean",
+                      "title": "Responsive",
+                      "description": "Whether the template contains media queries to make it responsive.",
+                      "readOnly": true
+                    },
+                    "category": {
+                      "type": "string",
+                      "title": "Template Category",
+                      "description": "If available, the category the template is listed in.",
+                      "readOnly": true
+                    },
+                    "date_created": {
+                      "type": "string",
+                      "title": "Date Created",
+                      "description": "The date and time the template was created in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "date_edited": {
+                      "type": "string",
+                      "title": "Date Edited",
+                      "description": "The date and time the template was edited in ISO 8601 format.",
+                      "format": "date-time",
+                      "readOnly": true
+                    },
+                    "created_by": {
+                      "type": "string",
+                      "title": "Created By",
+                      "description": "The login name for template's creator.",
+                      "readOnly": true
+                    },
+                    "edited_by": {
+                      "type": "string",
+                      "title": "Edited By",
+                      "description": "The login name who last edited the template.",
+                      "readOnly": true
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "title": "Active",
+                      "description": "User templates are not 'deleted,' but rather marked as 'inactive.' Returns whether the template is still active.",
+                      "readOnly": true
+                    },
+                    "folder_id": {
+                      "type": "string",
+                      "title": "Folder ID",
+                      "description": "The id of the folder the template is currently in."
+                    },
+                    "thumbnail": {
+                      "type": "string",
+                      "title": "Template Thumbnail",
+                      "description": "If available, the URL for a thumbnail of the template.",
+                      "readOnly": true
+                    },
+                    "share_url": {
+                      "type": "string",
+                      "title": "Share URL",
+                      "description": "The URL used for [template sharing](https://mailchimp.com/help/share-a-template/).",
+                      "readOnly": true
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "title": "Content Type",
+                      "description": "How the template's content is put together.",
+                      "enum": [
+                        "template",
+                        "multichannel",
+                        "html"
+                      ],
+                      "readOnly": true
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "update_template",
+          "methodNameCamel": "updateTemplate"
+        }
+      },
+      "delete": {
+        "summary": "Delete template",
+        "description": "Delete a specific template.",
+        "operationId": "deleteTemplatesId",
+        "parameters": [
+          {
+            "name": "template_id",
+            "x-title": "Template ID",
+            "in": "path",
+            "description": "The unique id for the template.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Empty Response"
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "delete_template",
+          "methodNameCamel": "deleteTemplate"
+        }
+      }
+    },
+    "/templates/{template_id}/default-content": {
+      "get": {
+        "summary": "View default content",
+        "description": "Get the sections that you can edit in a template, including each section's default content.",
+        "operationId": "getTemplatesIdDefaultContent",
+        "parameters": [
+          {
+            "name": "fields",
+            "x-title": "Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to return. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "exclude_fields",
+            "x-title": "Exclude Fields",
+            "in": "query",
+            "description": "A comma-separated list of fields to exclude. Reference parameters of sub-objects with dot notation.",
+            "required": false,
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "template_id",
+            "x-title": "Template ID",
+            "in": "path",
+            "description": "The unique id for the template.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Default Content",
+                  "description": "Default content for a template.",
+                  "properties": {
+                    "sections": {
+                      "type": "object",
+                      "title": "Sections",
+                      "description": "The sections that you can edit in the template, including each section's default content.",
+                      "additionalProperties": {
+                        "description": "The default content for the sections that you can edit in the template."
+                      }
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Template Default Content",
+                  "description": "Default content for a template.",
+                  "properties": {
+                    "sections": {
+                      "type": "object",
+                      "title": "Sections",
+                      "description": "The sections that you can edit in the template, including each section's default content.",
+                      "additionalProperties": {
+                        "description": "The default content for the sections that you can edit in the template."
+                      }
+                    },
+                    "_links": {
+                      "title": "Links",
+                      "description": "A list of link types and descriptions for the API schema documents.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Resource Link",
+                        "description": "This object represents a link from the resource where it is found to another resource or action that may be performed.",
+                        "properties": {
+                          "rel": {
+                            "type": "string",
+                            "title": "Rel",
+                            "description": "As with an HTML 'rel' attribute, this describes the type of link.",
+                            "readOnly": true
+                          },
+                          "href": {
+                            "type": "string",
+                            "title": "Href",
+                            "description": "This property contains a fully-qualified URL that can be called to retrieve the linked resource or perform the linked action.",
+                            "readOnly": true
+                          },
+                          "method": {
+                            "type": "string",
+                            "title": "Method",
+                            "description": "The HTTP method that should be used when accessing the URL defined in 'href'.",
+                            "enum": [
+                              "GET",
+                              "POST",
+                              "PUT",
+                              "PATCH",
+                              "DELETE",
+                              "OPTIONS",
+                              "HEAD"
+                            ],
+                            "readOnly": true
+                          },
+                          "targetSchema": {
+                            "type": "string",
+                            "title": "Target Schema",
+                            "description": "For GETs, this is a URL representing the schema that the response should conform to.",
+                            "readOnly": true
+                          },
+                          "schema": {
+                            "type": "string",
+                            "title": "Schema",
+                            "description": "For HTTP methods that can receive bodies (POST and PUT), this is a URL representing the schema that the body should conform to.",
+                            "readOnly": true
+                          }
+                        }
+                      },
+                      "readOnly": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An error generated by the Mailchimp API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Problem Detail Document",
+                  "description": "An error generated by the Mailchimp API. Conforms to IETF draft 'draft-nottingham-http-problem-06'.",
+                  "required": [
+                    "type",
+                    "title",
+                    "status",
+                    "detail",
+                    "instance"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "title": "Problem Type",
+                      "description": "An absolute URI that identifies the problem type. When dereferenced, it should provide human-readable documentation for the problem type.",
+                      "example": "https://mailchimp.com/developer/marketing/docs/errors/"
+                    },
+                    "title": {
+                      "type": "string",
+                      "title": "Error Title",
+                      "description": "A short, human-readable summary of the problem type. It shouldn't change based on the occurrence of the problem, except for purposes of localization.",
+                      "example": "Resource Not Found"
+                    },
+                    "status": {
+                      "type": "integer",
+                      "title": "HTTP Status Code",
+                      "description": "The HTTP status code (RFC2616, Section 6) generated by the origin server for this occurrence of the problem.",
+                      "example": 404
+                    },
+                    "detail": {
+                      "type": "string",
+                      "title": "Error Message",
+                      "description": "A human-readable explanation specific to this occurrence of the problem. [Learn more about errors](/developer/guides/get-started-with-mailchimp-api-3/#Errors).",
+                      "example": "The requested resource could not be found."
+                    },
+                    "instance": {
+                      "type": "string",
+                      "title": "Instance ID",
+                      "description": "A string that identifies this specific occurrence of the problem. Please provide this ID when contacting support.",
+                      "example": "995c5cb0-3280-4a6e-808b-3b096d0bb219"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "tags": [
+          "templates"
+        ],
+        "x-custom-config": {
+          "methodNameSnake": "get_default_content_for_template",
+          "methodNameCamel": "getDefaultContentForTemplate"
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

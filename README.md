@@ -103,6 +103,7 @@ confirme comigo antes de começar.
 | [trello](./trello) | `API_KEY` (query `key` + `token`) | 151 em 5 serviços | importado e validado em diagrama |
 | [open-meteo](./open-meteo) | `NO_AUTH` | 9 em 9 serviços | importado e validado em diagrama |
 | [whatsapp](./whatsapp) | `TOKEN` (Bearer) | 100 em 6 serviços | importado e validado em diagrama; entrega bloqueada pela Meta no número de teste (ver README) |
+| [biodoc](./biodoc) | `TOKEN` (Bearer) | 12 em 3 serviços | importado e validado em diagrama (sandbox); só o serviço de auditoria exercitado — verificação facial depende de dado biométrico de teste (ver README) |
 
 ## Estrutura
 
@@ -117,7 +118,8 @@ tools/
 ├── tag_by_path.py           # injeta tags derivadas do path, quando a spec não tem
 ├── slice_spec.py            # recorta uma spec grande em specs menores, por tag
 ├── prepare_whatsapp.py      # normaliza a spec oficial da Meta (ver whatsapp/README.md)
-└── dereference.py           # gera os *.ipaas.json a partir das specs fonte
+├── dereference.py           # gera os *.ipaas.json a partir das specs fonte
+└── dereference.mjs          # porta Node do dereference.py, para máquinas sem Python
 ```
 
 Um app pode ter **várias specs, uma por serviço**, quando a API é grande. Nesse caso o nome carrega o domínio e cada uma gera seu próprio arquivo do iPaaS:

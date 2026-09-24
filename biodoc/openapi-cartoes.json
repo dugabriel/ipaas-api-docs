@@ -1,0 +1,288 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BioDoc - Cartões",
+    "description": "Cadastro e gestão de cartões (carteirinhas) de beneficiários na plataforma de biometria facial BioDoc: consulta da imagem principal, cadastro, isenção, solicitação de nova foto e exclusão em lote.",
+    "version": "1.0",
+    "contact": {
+      "name": "BioDoc",
+      "url": "https://docs.biodoc.com.br"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.sandbox.biodoc.com.br/api",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api.biodoc.com.br/api",
+      "description": "Produção"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/card/integration/mainimage": {
+      "get": {
+        "tags": ["Cartões"],
+        "summary": "Buscar imagem principal do cartão",
+        "description": "Realiza a busca da imagem principal de um cartão e retorna o status do cadastro e as configurações da empresa.",
+        "parameters": [
+          {
+            "name": "idCard",
+            "in": "query",
+            "required": true,
+            "description": "Número identificador do cartão.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "procedure",
+            "in": "query",
+            "required": false,
+            "description": "Código do procedimento.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requisição processada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cardStatus": {
+                      "type": "integer",
+                      "description": "Enum de status: 1=Biometria com imagem; 2=Beneficiário não cadastrado; 3=Biometria sem imagem; 4=Solicitação de troca de imagem obrigatória; 5=Alteração de biometria pendente; 6=Alteração de biometria obrigatória pendente."
+                    },
+                    "name": { "type": "string", "description": "Nome do beneficiário." },
+                    "mainImage": { "type": "string", "description": "URL temporária da imagem de verificação do cartão. Possui prazo de expiração." },
+                    "quantityJustifies": { "type": "integer", "description": "Quantidade de justificativas já realizadas pelo beneficiário." },
+                    "base64Image": { "type": "string", "description": "Base64 da imagem do beneficiário." },
+                    "releaseBiometric": { "type": "boolean", "description": "Isento de biometria. Se true, a biometria deve ser dispensada." },
+                    "closeTopLocation": { "type": "boolean", "description": "Atualizar a URL do frame." },
+                    "markFace": { "type": "boolean", "description": "Adicionar identificador para centralizar face." },
+                    "liveness": { "type": "boolean", "description": "Adicionar camada de verificação de foto de foto." },
+                    "livenessVersion": { "type": "string", "description": "Modelo do Liveness: 1.0=passivo, 2.0=ativo." },
+                    "automaticAprove": { "type": "boolean", "description": "Atualização de imagem automática." },
+                    "verifyCardCompany": { "type": "boolean", "description": "Verificar regra de intercâmbio." },
+                    "registerNoImage": { "type": "boolean", "description": "Registrar sem imagem." },
+                    "changeImage": { "type": "boolean", "description": "Atualizar imagem." },
+                    "justify": { "type": "boolean", "description": "Permite realizar justificativa." },
+                    "justifyAfterAttempts": { "type": "boolean", "description": "Justificativa na verificação após três falhas consecutivas." }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Erro de autorização." },
+          "403": { "description": "Acesso não permitido." },
+          "422": { "description": "Não foi possível concluir o processamento." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    },
+    "/card/register": {
+      "post": {
+        "tags": ["Cartões"],
+        "summary": "Cadastrar cartão do beneficiário",
+        "description": "Cadastra o cartão do beneficiário com a imagem capturada em Base64.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id", "name", "image"],
+                "properties": {
+                  "id": { "type": "string", "description": "Número identificador do cartão." },
+                  "name": { "type": "string", "description": "Nome do beneficiário." },
+                  "image": { "type": "string", "description": "Imagem capturada em Base64." },
+                  "detail": { "type": "object", "additionalProperties": true, "description": "JSON chave/valor com detalhes adicionais a guardar no cadastro." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Dados criados com sucesso." },
+          "400": { "description": "Requisição mal formada, parâmetros inválidos." },
+          "401": { "description": "Erro de autorização." },
+          "422": { "description": "Não foi possível concluir o processamento." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    },
+    "/card/release": {
+      "post": {
+        "tags": ["Cartões"],
+        "summary": "Isentar beneficiário de biometria",
+        "description": "Realiza a isenção do beneficiário. Deve ser usado quando, após a consulta, o parâmetro releaseBiometric vier como true.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id_card", "name"],
+                "properties": {
+                  "id_card": { "type": "string", "description": "Número identificador do cartão." },
+                  "name": { "type": "string", "description": "Nome do beneficiário." },
+                  "detail": { "type": "object", "additionalProperties": true, "description": "JSON chave/valor com detalhes adicionais." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Requisição processada com sucesso." },
+          "400": { "description": "Requisição mal formada, parâmetros inválidos." },
+          "401": { "description": "Erro de autorização." },
+          "422": { "description": "Não foi possível concluir o processamento." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    },
+    "/card/integration/setnewimage": {
+      "post": {
+        "tags": ["Cartões"],
+        "summary": "Exigir nova foto do beneficiário",
+        "description": "Define a obrigatoriedade de uma nova foto para o cartão informado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": { "type": "string", "description": "Número identificador do cartão." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Requisição processada com sucesso." },
+          "400": { "description": "Requisição mal formada, parâmetros inválidos." },
+          "401": { "description": "Erro de autorização." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    },
+    "/requestnewimage": {
+      "post": {
+        "tags": ["Cartões"],
+        "summary": "Sugerir nova foto para autenticação",
+        "description": "Sugere uma nova foto para autenticação do beneficiário. Corpo em Form Data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["idCard", "image", "description"],
+                "properties": {
+                  "idCard": { "type": "string", "description": "Número identificador do cartão." },
+                  "image": { "type": "string", "description": "Imagem capturada em Base64." },
+                  "description": { "type": "string", "description": "Justificativa da sugestão de troca de foto." },
+                  "detail": { "type": "object", "additionalProperties": true, "description": "JSON chave/valor com detalhes adicionais." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Requisição processada com sucesso." },
+          "400": { "description": "Requisição mal formada, parâmetros inválidos." },
+          "401": { "description": "Erro de autorização." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    },
+    "/card/integration/deleteMany": {
+      "post": {
+        "tags": ["Cartões"],
+        "summary": "Excluir cadastros de beneficiários em lote",
+        "description": "Exclui de 1 a 50 cadastros de beneficiários da aplicação.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["idList"],
+                "properties": {
+                  "idList": {
+                    "type": "array",
+                    "description": "Lista de números identificadores de cartão, limitada a 50 registros.",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Requisição processada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "allSuccess": { "type": "boolean", "description": "Retorna false se ocorreu algum erro." },
+                        "message": { "type": "string", "description": "Mensagem amigável do resultado da operação." },
+                        "listStatus": {
+                          "type": "array",
+                          "description": "Status da remoção de cada registro.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "idCard": { "type": "string", "description": "Identificador do registro." },
+                              "deleted": { "type": "boolean", "description": "true se a carteirinha foi removida." },
+                              "message": { "type": "string", "description": "Mensagem amigável do status." },
+                              "imageList": {
+                                "type": "array",
+                                "description": "Status das imagens salvas dessa carteirinha.",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "key": { "type": "integer", "description": "Identificador da imagem." },
+                                    "deleted": { "type": "boolean", "description": "true se a imagem foi removida." }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Requisição mal formada, parâmetros inválidos." },
+          "401": { "description": "Erro de autorização." },
+          "500": { "description": "Erro interno." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token de acesso BioDoc enviado no header Authorization com a palavra 'Bearer'."
+      }
+    }
+  }
+}

@@ -54,6 +54,15 @@ python3 tools/dereference.py <app>                                # gera os *.ip
 python3 tools/dereference.py --all
 ```
 
+Em máquina **sem Python** (só Node), use as portas equivalentes — mesmo comportamento:
+
+```bash
+node tools/slice_spec.mjs <spec-origem> <app> "Tag=slug" ...    # aceita "Tag1+Tag2=slug" para juntar tags num serviço
+node tools/dereference.mjs <app>                                 # ou --all
+```
+
+(`tag_by_path.py` ainda não tem porta em Node; se precisar retaguear numa máquina sem Python, resolva à parte.)
+
 Regras que evitam a maior parte do retrabalho:
 
 - **Nunca fixe `diagramId`.** Cada save cria nova revisão; sempre leia com `lastVersion=true` (seção 6.4).
@@ -420,6 +429,14 @@ Verificado por bissecção com uma spec de uma operação por arquivo: na spec d
 
 `items` é obrigatório em array no OpenAPI 3.0, então specs oficiais com essa falha não são raras. O `dereference.py` acusa o caso do `requestBody` em `validar_para_ipaas`.
 
+**`oneOf`/`anyOf` grande e profundo em resposta zera a importação, em silêncio.** Mesmo sintoma do array sem `items`: HTTP 200, corpo vazio e **zero recurso** na spec inteira do serviço, sem log nem mensagem. Verificado no Mailchimp: as respostas de `GET /lists` e `GET /campaigns` trazem `segment_opts.conditions` como um `oneOf` de **41 membros** (tipos de condição de segmento), aninhado fundo (profundidade ~25). Com ele, os serviços `Audiências` (70 ops) e `Campanhas` (22) importavam **0**; os serviços sem o construto (`Relatórios`, `Templates`, `Conta`) importavam normalmente. `Automações` tinha um `oneOf` menor e passou — ou seja, não é o `oneOf` em si, é o **tamanho/profundidade** dele que estoura algum limite do importador.
+
+O `dereference` (`.py` e `.mjs`) ganhou um passo `colapsar_one_of`/`colapsarOneOf` que **une os membros do `oneOf`/`anyOf` num único objeto** (união das properties), removendo o ramo profundo. O iPaaS não usa a discriminação ao mapear campos, então nenhum campo se perde. Depois do colapso, os 6 serviços do Mailchimp importaram 140/140. Roda após a dereferência (membros já expandidos) e após remover `discriminator`.
+
+Diagnóstico prático: quando um serviço der 200 com **zero** recurso e a spec passar na checagem de `tags`/`array sem items`, suspeite de um `oneOf`/`anyOf` grande e profundo em resposta. Um `oneOf` pequeno (poucos membros, raso) importa sem problema.
+
+**`swagger2openapi` rejeita `type` como array — normalize antes.** A spec oficial do Mailchimp declara `swagger: "2.0"` mas tem 8 esquemas com `type: ["string","integer"]` (em `variant_ids` de `ecommerce`), o que é JSON-Schema/3.1, não 2.0 válido. O `swagger2openapi@7` aborta com `S2OError: (Patchable) schema type must not be an array`. A saída é colapsar `type: [...]` para um tipo único antes de converter (ex.: `"string"`, já que os IDs vão como texto). Fica no domínio `ecommerce`, que não foi recortado ainda — quem for importar `ecommerce` precisa desse passo.
+
 **A validação tem que rodar na spec dereferenciada, não na fonte.** Na fonte os schemas estão atrás de `$ref` e uma checagem estrutural não os alcança — o array sem `items` do WhatsApp estava dentro de `#/components/schemas/Message` e passava batido.
 
 **`discriminator` sobrevive à dereferência e vira referência pendurada.** O `mapping` aponta para `#/components/schemas/...`, que o `dereference.py` descarta do arquivo. Como os valores são strings e não chaves `$ref`, a checagem de `$ref` restante não os pega. O `oneOf` ao lado já tem os membros expandidos, então remover o `discriminator` não perde campo nenhum.
@@ -745,6 +762,8 @@ GET    /ipaas/api/v4/messages?page=1&pageSize=10&status=DONE&status=ERROR&initia
 | Trello | `API_KEY` (query `key` + `token`) | 151 em 5 serviços | 151 recursos importados; exigiu injetar `tags` (a spec oficial não tem nenhuma) e remover `securitySchemes` em query, que quebrava o importador; conta com **duas** chaves em query criada; diagrama com 6 steps em 4 serviços executado `DONE`, criando cartão real e encadeando `{{{id4.id}}}` |
 | Open-Meteo | `NO_AUTH` | 9 em 9 serviços | Spec oficial já recortada por domínio, convertida de OpenAPI 3.1.0 YAML para 3.0.3 JSON; 9 recursos importados; **7 ambientes** (um por subdomínio) porque cada domínio tem um host próprio; diagrama com 9 steps executado `DONE`, agregando os 9 payloads reais na resposta síncrona |
 | WhatsApp | `TOKEN` (Bearer) | 100 em 6 serviços | Spec oficial da Meta (`github.com/facebook/openapi`), 113 operações recortadas em 100; convertida de 3.1.0 para 3.0.3; `/{Version}` movido do path para a URL do ambiente; 13 operações sem `tags` retagueadas em 6 domínios; 100 recursos importados e conferidos campo a campo. Diagrama com 5 steps executado `DONE` em 11,4s, com os payloads reais de cada serviço. A entrega **passou a funcionar** depois que um número próprio brasileiro verificado (`VERIFIED`/`LIVE`) substituiu o número de teste americano e a WABA ficou `account_review_status: APPROVED`: template (primeiro contato) e texto livre (janela de 24h aberta) chegaram no aparelho, tanto por chamada direta quanto pelo diagrama. Antes, com o número de teste, os envios recebiam `accepted` e **não entregavam** (erro `130497`, cross-country para o Brasil em conta sem verificação de negócio, só visível no webhook de status). Trocar de número **não** exigiu recriar ambiente/conta nem reimportar: só mudar `phone_number_id`/`WABA-ID` no `inPath` dos steps (ver `whatsapp/CADASTRO-NUMERO.md`). Três armadilhas novas achadas: **import assíncrono** (200 não significa concluído), **`array` sem `items` no `requestBody`** zerando a spec em silêncio, e **`PUT` de conta sem `active: true`** desativando a credencial. A spec oficial da Meta documenta **menos** campos do que a API devolve — 16 acrescentados por observação de resposta real |
+| BioDoc | `TOKEN` (Bearer) | 12 em 3 serviços | Reconhecimento facial para saúde. **Sem OpenAPI oficial** — a doc (`docs.biodoc.com.br`) é textual; specs escritas à mão a partir dela, recortadas em Cartões (6), Verificação (2) e Justificativas e Auditoria (4). 12 recursos importados e conferidos. Diagrama com 1 step executado `DONE` em 4,1s via `GET /integrations/justify`. **Validação parcial**: só o serviço de auditoria foi exercitado em execução; Cartões e Verificação dependem de `idCard` de teste e imagem base64 de rosto no sandbox, indisponíveis na sessão — o `DONE` valida cadastro/contrato/auth, não o match facial (mesmo ponto cego da mensageria). Ambiente Sandbox só; Produção não cadastrada. Duas descobertas de ambiente: **máquina sem Python** (só Node) — criada a porta `tools/dereference.mjs`; e o **cadastro rodou por JS colado no console do navegador** (F12), sem MCP do Chrome, em Windows |
+| Mailchimp | `BASIC` (API key como senha) | 140 em 6 serviços | **Primeiro app `BASIC`** — fecha o quarto padrão viável (seção 11). Username é qualquer string, password é a API key. Spec oficial (`mailchimp/mailchimp-client-lib-codegen`, `spec/marketing.json`) em **Swagger 2.0**, convertida para OpenAPI 3.0.3 e recortada por domínio: Audiências (70), Campanhas (22), Relatórios (22), Automações (18), Templates (6), Conta e Ping (2). Base URL é **data-center-específico** (`https://{dc}.api.mailchimp.com/3.0`; o `host` da spec, `server.api.mailchimp.com`, é placeholder e não resolve) — o dc sai do sufixo da API key (`us1`). Diagrama com 5 GETs read-only executado `DONE` em 3,6s, com payloads reais (`/ping` = "Everything's Chimpy!", `/` com dados da conta). Três descobertas: **`oneOf` grande e profundo em resposta zera o import em silêncio** (41 membros em `segment_opts.conditions` derrubavam Audiências e Campanhas — corrigido com o colapso de `oneOf` no `dereference`); **`swagger2openapi` rejeita `type: [...]` array** (8 casos em `ecommerce`, normalizar antes); e criada a porta **`tools/slice_spec.mjs`** (máquina sem Python). Cadastro por JS no console (F12), sem MCP. **Não validado em execução**: escrita (POST, precisa `inBody`) e os serviços Templates/Automações. Credencial passou pelo navegador — **rotacionar**. Publicado no fork `HugoHSevero/ipaas-api-docs` (`add-mailchimp`), importado por SHA; PR para `dugabriel:main` pendente |
 
 ---
 
@@ -915,25 +934,75 @@ A versão da Graph API está na **URL do ambiente**, não em parâmetro, porque 
 
 A serviço da rastreabilidade: a bissecção que achou a armadilha do `array` sem `items` (seção 4) criou 56 serviços `ZZ ...` neste app, todos removidos depois com `DELETE /v3/application-services/{id}`.
 
+### BioDoc — `TOKEN` (Bearer)
+
+Plataforma de reconhecimento facial para saúde. Sem OpenAPI oficial: specs escritas à mão a partir de `docs.biodoc.com.br`. Cadastrado só no ambiente **Sandbox**; Produção (`https://api.biodoc.com.br/api`) ainda não criada.
+
+| Item | Id |
+|---|---|
+| App (`componentId`) | `447d7705-9ce0-468e-a80a-8b1cbf268bed` |
+| Ambiente `Sandbox` (`https://api.sandbox.biodoc.com.br/api`) | `4df750df-5a2a-4cd7-892c-22c5c779536f` |
+| Conta `Sandebox` (TOKEN) | `c7df13a5-d28d-4bdd-886b-5d2510f3a1b3` |
+| Serviço `Cartões` (6 recursos) | `b00919b4-ca78-4880-be85-005e066792f3` |
+| Serviço `Verificação` (2 recursos) | `ebb8a253-a57c-4cd5-8bd6-cc97b1660cfe` |
+| Serviço `Justificativas e Auditoria` (4 recursos) | `883bfca9-91eb-489d-85a7-da0c263cc68b` |
+| Diagrama `Valida BioDoc` (`integrationId`) | `fd3e344b-b213-48fb-ad95-3fedf45e1198` |
+
+O token da conta foi colado pelo usuário direto na interface/console e **deve ser rotacionado**. O nome da conta ficou `Sandebox` (typo, criada à mão) — cosmético, corrigir por `PUT /v3/accounts/{id}` com o corpo completo e `active: true` se incomodar.
+
+**Validação parcial, por design.** O diagrama executou `DONE` (4,1s) com `GET /integrations/justify`, que só lê. Isso valida cadastro, contrato e o token. Os outros dois serviços **não foram exercitados em execução**: `POST /card/register`, `/card/integration/mainimage` e os dois `verify` exigem um `idCard` de teste cadastrado no sandbox e uma imagem base64 de rosto real, que não estavam à mão. Como em app de mensageria, um `DONE` nesses endpoints comprovaria a chamada aceita, não o acerto biométrico — a confirmação do match tem que vir da própria BioDoc.
+
+**7 das 12 operações são POST com corpo** — importador não traz `requestBody` (seção 4), então o corpo vai em `configurations.inBody` no diagrama. `POST /card/integration/verify` e `POST /requestnewimage` são `multipart/form-data`, não JSON; **não verificado** como o iPaaS monta o corpo `multipart` em execução (o step validado é GET, sem corpo).
+
+**Descobertas de ambiente desta sessão:**
+
+- **Máquina sem Python, só Node.** O `dereference.py` não roda. Foi criada uma porta em Node, `tools/dereference.mjs`, que replica o comportamento (resolve `$ref`, mescla `allOf`, remove `discriminator` e `securitySchemes` em query, valida os requisitos do importador). Uso: `node tools/dereference.mjs <app>`. Onde houver Python, o `.py` continua valendo e produz o mesmo resultado.
+- **Cadastro sem MCP do Chrome, por JS no console.** O setup do MCP do README (seção "Pré-requisito") só cobre Linux e depende de instalar/ligar o `chrome-devtools-mcp`. Nesta sessão (Windows) o MCP não estava disponível e o usuário preferiu operar à mão: o agente forneceu trechos de JS colados no **Console do navegador** (F12) da aba já logada, e o próprio script leu o token do cookie `jwt.token` e fez as chamadas de API. Funciona bem para tudo, menos criar a integração — que continua sendo pela interface (seção 6.2). Vale como caminho alternativo quando não há navegador controlável: **não precisa de MCP para cadastrar**, só para automatizar cliques.
+
+### Mailchimp — `BASIC` (API key como senha)
+
+Primeiro app com o modelo `BASIC`. Spec oficial (`mailchimp/mailchimp-client-lib-codegen`, `spec/marketing.json`) em Swagger 2.0, convertida para OpenAPI 3.0.3 e recortada em 6 serviços. Base URL data-center-específico: o `us1` vem do sufixo da API key do usuário.
+
+| Item | Id |
+|---|---|
+| App (`componentId`) | `d07e88d3-5a40-4c6a-920b-eb55579032a6` |
+| Ambiente `Produção` (`https://us1.api.mailchimp.com/3.0`) | `9efd2a32-ba1c-4da4-8807-0f90349dd79b` |
+| Conta `Produção` (BASIC, username `mailchimp` + API key) | `08d6122e-c0bb-4c94-b50f-bd760f0a6479` |
+| Serviço `Audiências` (70 recursos) | `75ed9ddb-53d9-4841-bc5c-4fd5b1399d52` |
+| Serviço `Campanhas` (22 recursos) | `aaeb3a4a-bde7-4975-872c-3823d0098917` |
+| Serviço `Relatórios` (22 recursos) | `b9ec9a18-6285-4666-b752-76d924c81836` |
+| Serviço `Automações` (18 recursos) | `9138b276-5e90-45d6-9971-592a2f90ef08` |
+| Serviço `Templates` (6 recursos) | `dce425c7-9dcc-4fde-b9cb-074b498325df` |
+| Serviço `Conta e Ping` (2 recursos) | `564c7f4d-94da-41e5-909d-09ada86c1342` |
+| Diagrama `Valida Mailchimp` (`integrationId`) | `898ede31-d87e-486c-818a-7e688b2c373d` |
+
+A API key foi setada no console e usada na conta; **deve ser rotacionada**. Se a execução começar a dar 401, é provável que tenha sido trocada — peça a nova e atualize com `PUT /ipaas/api/v3/accounts/{id}` (corpo completo, `active: true`).
+
+O data center está na **URL do ambiente**, não em parâmetro. Uma conta de outro data center exigiria outro ambiente (ou um ambiente custom com placeholder, à la Asaas). `phone_number`/`list_id`/`campaign_id` etc. vão como parâmetro de caminho por operação, via `configurations.inPath`.
+
+Validado com 5 GETs read-only (`DONE`, 3,6s). **Não exercitados em execução**: escrita (POST — precisa `configurations.inBody`, o importador não traz o corpo) e os serviços `Templates` e `Automações`. Domínios fora do recorte (`ecommerce`, `sms-campaigns`, `reporting`, `fileManager`, ...) listados no `mailchimp/README.md`.
+
+**As specs foram publicadas no fork `HugoHSevero/ipaas-api-docs` (branch `add-mailchimp`), não em `dugabriel`** — o push para `origin` (dugabriel) deu 403 por falta de permissão. A importação usou a URL raw do fork por SHA (`40304e6`), como o Open-Meteo fez. O PR do fork para `dugabriel:main` está **pendente**; as URLs `dugabriel/.../main` no `ipaas.json` e no README valem após o merge.
+
+### Nota sobre este levantamento
+
+A seção 10 estava **desatualizada** no início desta sessão: o `GET /applications` do tenant `iPaaS Gateway` trouxe 83 apps (19 custom), com nomes que não batiam com o histórico (apareceram `Anymarket`, `Intelipost`, `Protheus`, e não apareceram na amostra `Trello`/`Asaas`/`Brevo`/`BioDoc`). O tenant é compartilhado e muda; **confirme sempre com um GET** antes de assumir os IDs acima.
+
 ---
 
 ## 11. Fila de próximos apps
 
 Ordenada por custo de integração. O critério é o modelo de autenticação (seção 3) e a existência de spec oficial.
 
-### Padrões de auth ainda não exercitados
+### Padrões de auth — status
 
-| Padrão | Candidatos | Observação |
-|---|---|---|
-| `BASIC` | Jira Cloud, Twilio, Zendesk | Jira Cloud é o mais barato: plano free permanente, API token instantâneo em `id.atlassian.com`, spec oficial em `developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json` (grande, exige recorte) |
+Os quatro padrões viáveis estão **todos cobertos**: `API_KEY` em `query` pelo **Trello**, `TOKEN` pelo **WhatsApp**, `BASIC` pelo **Mailchimp** (seção 10), além de `NO_AUTH` (BrasilAPI, Open-Meteo) e `API_KEY` em header (Asaas, Brevo). O catálogo está pronto para escalar sem padrão de auth novo pela frente.
 
-`API_KEY` em `query` foi coberto pelo **Trello** e `TOKEN` pelo **WhatsApp** (seção 10) — resta só `BASIC` para fechar os quatro padrões viáveis. Clicksign v1 e Pipedrive seguem como alternativas em query, se houver interesse específico.
+Se quiser mais um `BASIC` para reforçar o padrão: Jira Cloud (plano free permanente, API token instantâneo em `id.atlassian.com`, spec oficial em `developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json`, grande, exige recorte), Twilio, Zendesk.
 
-Candidatos `TOKEN` que ficaram na fila, caso queira mais um: HubSpot (token de private app em developer test account free, spec oficial por objeto), ZapSign (API Token estático, conta free, sem spec oficial, alta relevância BR), SendGrid, Notion, Airtable, Asana.
+Candidatos `TOKEN` que ficaram na fila: HubSpot (token de private app em developer test account free, spec oficial por objeto), ZapSign (API Token estático, conta free, sem spec oficial, alta relevância BR), SendGrid, Notion, Airtable, Asana.
 
 Levantado em 2026-09-03 a partir da documentação dos fornecedores; a facilidade de obter credencial muda com o tempo, reconfirme antes de começar.
-
-Fechar `BASIC` cobriria os quatro padrões viáveis, deixando o catálogo pronto para escalar.
 
 ### Brasileiros relevantes
 
