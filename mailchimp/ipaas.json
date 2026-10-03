@@ -1,0 +1,75 @@
+{
+  "app": {
+    "name": "Mailchimp",
+    "description": "Plataforma de marketing e automação: audiências e contatos, campanhas de e-mail, relatórios, automações e templates."
+  },
+  "environments": [
+    {
+      "name": "Produção",
+      "type": "REST",
+      "baseURL": "https://{dc}.api.mailchimp.com/3.0",
+      "authModels": ["BASIC"],
+      "note": "{dc} é o data center da conta, o sufixo da API key após o último hífen (ex.: chave terminada em -us14 => host us14). Ao criar o ambiente, substitua {dc} pelo valor concreto (ex.: https://us14.api.mailchimp.com/3.0). O placeholder server.api.mailchimp.com da spec oficial não resolve DNS."
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Produção",
+      "environment": "Produção",
+      "authModel": "BASIC",
+      "username": "anystring",
+      "password": "<API key, cadastrar na interface>",
+      "note": "Mailchimp usa HTTP Basic: username pode ser qualquer string (convenção: 'anystring' ou o nome do app) e password é a API key. Não versione a chave."
+    }
+  ],
+  "services": [
+    {
+      "name": "Audiências",
+      "description": "Listas/audiências, membros, tags, segmentos, merge fields, notas e atividade",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "user",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-audiencias.ipaas.json"
+    },
+    {
+      "name": "Campanhas",
+      "description": "Criação, conteúdo, envio, agendamento e ações de campanhas de e-mail",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "mail",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-campanhas.ipaas.json"
+    },
+    {
+      "name": "Relatórios",
+      "description": "Relatórios de desempenho de campanhas: aberturas, cliques, e-mail activity, domínios e mais",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "product",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-relatorios.ipaas.json"
+    },
+    {
+      "name": "Automações",
+      "description": "Automações clássicas: workflows, e-mails, fila de assinantes e ações de start/pause",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "adb",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-automacoes.ipaas.json"
+    },
+    {
+      "name": "Templates",
+      "description": "Templates de e-mail: listar, criar, editar, excluir e conteúdo padrão",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "light-bulb",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-templates.ipaas.json"
+    },
+    {
+      "name": "Conta e Ping",
+      "description": "Recurso raiz da API (dados da conta) e health check (ping)",
+      "environment": "Produção",
+      "resourceType": "REST",
+      "icon": "product",
+      "swaggerUrl": "https://raw.githubusercontent.com/dugabriel/ipaas-api-docs/main/mailchimp/openapi-conta.ipaas.json"
+    }
+  ]
+}

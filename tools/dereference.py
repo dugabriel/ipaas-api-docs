@@ -195,6 +195,50 @@ def remover_discriminators(no):
     return no
 
 
+def colapsar_one_of(no):
+    """Colapsa `oneOf`/`anyOf` em um único schema.
+
+    Verificado no Mailchimp: um `oneOf` de 41 membros (tipos de condição de
+    segmento), aninhado fundo na resposta de `GET /lists` e `GET /campaigns`,
+    faz o `import-swagger` responder HTTP 200 e criar **zero** recurso — a spec
+    inteira do serviço não importa, sem mensagem de erro (mesmo padrão
+    silencioso do array sem items). Os serviços sem esse construto (Relatórios,
+    Templates) importaram normalmente.
+
+    O iPaaS não usa a discriminação ao mapear campos, então unir os membros num
+    objeto (união das properties) preserva os campos e remove o ramo profundo
+    que quebra o importador. Membros escalares ou mistos caem no primeiro
+    membro. Roda após a dereferência (membros já expandidos) e após remover
+    discriminator (o `mapping` já saiu).
+    """
+    if isinstance(no, list):
+        return [colapsar_one_of(i) for i in no]
+    if isinstance(no, dict):
+        atual = no
+        for chave in ("oneOf", "anyOf"):
+            if isinstance(atual.get(chave), list):
+                membros = [colapsar_one_of(m) for m in atual[chave]]
+                resto = {k: v for k, v in atual.items() if k != chave}
+                objetos = [m for m in membros
+                           if isinstance(m, dict) and (m.get("properties") or m.get("type") == "object")]
+                if objetos:
+                    props = {}
+                    req = []
+                    for m in objetos:
+                        props.update(m.get("properties", {}))
+                        req.extend(m.get("required", []))
+                    uniao = {"type": "object"}
+                    if props:
+                        uniao["properties"] = props
+                    if req:
+                        uniao["required"] = sorted(set(req))
+                    atual = {**uniao, **resto}
+                else:
+                    atual = {**(membros[0] if membros else {}), **resto}
+        return {k: colapsar_one_of(v) for k, v in atual.items()}
+    return no
+
+
 def processar(pasta: Path):
     """Processa todas as specs fonte da pasta (openapi.json e openapi-*.json)."""
     origens = sorted(
@@ -211,6 +255,7 @@ def processar(pasta: Path):
 
         plano = dereferenciar(spec, spec)
         plano = remover_discriminators(plano)
+        plano = colapsar_one_of(plano)
         # valida o plano, nao a fonte: na fonte os schemas estao atras de $ref e
         # uma checagem estrutural (ex.: array sem items) nao os alcanca
         problemas = validar_para_ipaas(plano)

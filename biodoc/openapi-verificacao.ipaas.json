@@ -1,0 +1,148 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BioDoc - Verificação",
+    "description": "Verificação de identidade por biometria facial na plataforma BioDoc: comparação da face capturada com o cadastro do beneficiário.",
+    "version": "1.0",
+    "contact": {
+      "name": "BioDoc",
+      "url": "https://docs.biodoc.com.br"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.sandbox.biodoc.com.br/api",
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api.biodoc.com.br/api",
+      "description": "Produção"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/card/integration/verify": {
+      "post": {
+        "tags": [
+          "Verificação"
+        ],
+        "summary": "Verificar face (Form Data)",
+        "description": "Realiza a verificação de face do beneficiário. Corpo em Form Data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "image"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Número identificador do cartão."
+                  },
+                  "image": {
+                    "type": "string",
+                    "description": "Imagem capturada em Base64."
+                  },
+                  "detail": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "JSON chave/valor com detalhes adicionais."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Requisição processada com sucesso."
+          },
+          "400": {
+            "description": "Requisição mal formada, parâmetros inválidos."
+          },
+          "401": {
+            "description": "Erro de autorização."
+          },
+          "422": {
+            "description": "Não foi possível concluir o processamento."
+          },
+          "500": {
+            "description": "Erro interno."
+          }
+        }
+      }
+    },
+    "/integrations/verify": {
+      "post": {
+        "tags": [
+          "Verificação"
+        ],
+        "summary": "Verificar face (JSON)",
+        "description": "Realiza a verificação de face do beneficiário. Corpo em JSON.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "image"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Número identificador do cartão."
+                  },
+                  "image": {
+                    "type": "string",
+                    "description": "Imagem capturada em Base64."
+                  },
+                  "detail": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "JSON chave/valor com detalhes adicionais."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Requisição processada com sucesso."
+          },
+          "400": {
+            "description": "Requisição mal formada, parâmetros inválidos."
+          },
+          "401": {
+            "description": "Erro de autorização."
+          },
+          "422": {
+            "description": "Não foi possível concluir o processamento."
+          },
+          "500": {
+            "description": "Erro interno."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token de acesso BioDoc enviado no header Authorization com a palavra 'Bearer'."
+      }
+    }
+  }
+}

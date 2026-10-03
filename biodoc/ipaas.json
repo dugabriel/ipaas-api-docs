@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "BioDoc",
+    "description": "Plataforma de reconhecimento facial e auditoria para atendimentos em saúde: cadastro de beneficiários, verificação por biometria facial, justificativas e trilha de auditoria."
+  },
+  "environments": [
+    {
+      "name": "Sandbox",
+      "type": "REST",
+      "baseURL": "https://api.sandbox.biodoc.com.br/api",
+      "authModels": ["TOKEN"]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Sandbox",
+      "environment": "Sandbox",
+      "authModel": "TOKEN",
+      "token": "<token de acesso BioDoc do ambiente sandbox, cadastrar na interface — NÃO versionar>"
+    }
+  ],
+  "services": [
+    {
+      "name": "Cartões",
+      "description": "Cadastro e gestão de cartões (carteirinhas): imagem principal, cadastro, isenção, nova foto e exclusão em lote",
+      "environment": "Sandbox",
+      "resourceType": "REST",
+      "icon": "product",
+      "swaggerUrl": "https://raw.githubusercontent.com/HugoHSevero/ipaas-api-docs/main/biodoc/openapi-cartoes.ipaas.json"
+    },
+    {
+      "name": "Verificação",
+      "description": "Verificação de identidade por biometria facial",
+      "environment": "Sandbox",
+      "resourceType": "REST",
+      "icon": "light-bulb",
+      "swaggerUrl": "https://raw.githubusercontent.com/HugoHSevero/ipaas-api-docs/main/biodoc/openapi-verificacao.ipaas.json"
+    },
+    {
+      "name": "Justificativas e Auditoria",
+      "description": "Justificativas de atendimento, consulta de log por referência e busca de auditorias",
+      "environment": "Sandbox",
+      "resourceType": "REST",
+      "icon": "adb",
+      "swaggerUrl": "https://raw.githubusercontent.com/HugoHSevero/ipaas-api-docs/main/biodoc/openapi-auditoria.ipaas.json"
+    }
+  ]
+}
